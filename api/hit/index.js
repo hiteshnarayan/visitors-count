@@ -14,6 +14,13 @@ module.exports = async (req, res) => {
 
   try {
     const result = await addHit(key, hash);
+    if (req.query.debug) {
+      return res.status(200).json({
+        success: true,
+        ...result,
+        debug: { key, ip, ua, day, hash, deduped: !result.added }
+      });
+    }
     res.status(200).json({ success: true, ...result });
   } catch (e) {
     console.error(e);
