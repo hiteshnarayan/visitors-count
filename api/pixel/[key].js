@@ -1,5 +1,6 @@
 const crypto = require('crypto');
-const { addHit } = require('../../../lib/storage');
+// Correct relative path depth: pixel/[key].js is two levels under project root (api/pixel), so use '../../lib/storage'
+const { addHit } = require('../../lib/storage');
 
 // 1x1 transparent PNG buffer
 // Source: a minimal transparent PNG (base64)

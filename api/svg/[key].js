@@ -1,4 +1,5 @@
-const { getCount } = require('../../../lib/storage');
+// Correct relative path depth: svg/[key].js is two levels under project root (api/svg), so use '../../lib/storage'
+const { getCount } = require('../../lib/storage');
 
 // Custom branded SVG badge (no Shields dependency)
 // Route: /api/svg/<key>
