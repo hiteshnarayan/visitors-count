@@ -48,11 +48,15 @@ Deployment (Vercel + Upstash Redis — recommended)
    - https://<your-deploy-url>/api/hit/<key>
    - https://<your-deploy-url>/api/badge/<key>
 
-5. Embed the badge in your GitHub README using Shields:
+5. Embed the badge in your GitHub README using Shields or the custom SVG:
 
-   ```markdown
-   ![unique views](https://img.shields.io/endpoint?url=https://<your-deploy-url>/api/badge/my-repo)
-   ```
+  ```markdown
+  <!-- Shields endpoint style -->
+  ![unique views](https://img.shields.io/endpoint?url=https://<your-deploy-url>/api/badge/my-repo)
+
+  <!-- Custom branded SVG (no Shields) -->
+  <img alt="unique views" src="https://<your-deploy-url>/api/svg/my-repo" />
+  ```
 
 Quick Redis primer (for this project)
 
@@ -111,6 +115,16 @@ You're ready — if you'd like, I can now:
 - Deploy this repo to Vercel from my environment and verify the badge URL, or
 - Walk you step-by-step while you run the Vercel CLI and add Upstash env vars, or
 - Set up the Redis counters and show quick Redis commands to inspect counts.
+
+Custom branded SVG badge
+
+- You can embed a proprietary-looking badge without Shields:
+
+  ```html
+  <img alt="unique views" src="https://<your-deploy-url>/api/svg/my-repo" />
+  ```
+
+- This SVG uses a gradient, drop-shadow and monospaced typography to create a trademark-style look.
 
 GitHub OAuth (unique-account tracking)
 
