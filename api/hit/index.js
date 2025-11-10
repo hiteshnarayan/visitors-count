@@ -10,7 +10,9 @@ module.exports = async (req, res) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
   const ua = req.headers['user-agent'] || '';
   const day = new Date().toISOString().slice(0, 10);
-  const hash = crypto.createHash('sha256').update(`${key}|${ip}|${ua}|${day}`).digest('hex');
+  const cid = req.query.cid || req.headers['x-visitor-cid'] || '';
+  const base = cid ? `${key}|${ip}|${ua}|${day}|${cid}` : `${key}|${ip}|${ua}|${day}`;
+  const hash = crypto.createHash('sha256').update(base).digest('hex');
 
   try {
     const result = await addHit(key, hash);
@@ -18,7 +20,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({
         success: true,
         ...result,
-        debug: { key, ip, ua, day, hash, deduped: !result.added }
+        debug: { key, ip, ua, day, cid: cid || null, hash, deduped: !result.added }
       });
     }
     res.status(200).json({ success: true, ...result });

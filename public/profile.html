@@ -16,9 +16,15 @@
     <!-- Invisible tracking pixel ensures a GET that increments per unique visitor/day -->
     <img src="/api/pixel/profile" alt="" width="1" height="1" style="opacity:0;position:absolute" />
 
-    <!-- JS fetch as a backup (no-store prevents browser caching) -->
+    <!-- JS fetch with persistent client id (cid) adds entropy to uniqueness behind shared IP/UA -->
     <script>
-      fetch('/api/hit/profile', { cache: 'no-store' }).catch(()=>{});
+      const cidKey='vc_cid';
+      let cid=localStorage.getItem(cidKey);
+      if(!cid){cid=Math.random().toString(36).slice(2,10);localStorage.setItem(cidKey,cid);}      
+      // Replace pixel src to include cid for uniqueness as well
+      const px=document.querySelector('img[src^="/api/pixel/profile"]');
+      if(px) px.src='/api/pixel/profile?cid='+encodeURIComponent(cid)+'&t='+(Date.now());
+      fetch('/api/hit/profile?cid='+encodeURIComponent(cid)+'&t='+(Date.now()), { cache: 'no-store' }).catch(()=>{});
     </script>
 
     <p style="text-align:center;margin:20px 0">
