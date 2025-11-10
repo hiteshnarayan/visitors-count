@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Profile — Visit Counter</title>
+<body style="font-family:system-ui;background:#0b0e12;color:#eee;margin:0;padding:32px">
+  <main style="max-width:880px;margin:0 auto">
+    <h1 style="text-align:center;margin:0 0 16px">Hello! 👋 I'm Hitesh</h1>
+
+    <div style="text-align:center;margin:20px 0">
+      <img alt="Profile views" src="/api/svg/profile" />
+      <br />
+      <sub>Badge shows total; a hidden pixel and script below register your visit (once per day).</sub>
+    </div>
+
+    <!-- Invisible tracking pixel ensures a GET that increments per unique visitor/day -->
+    <img src="/api/pixel/profile" alt="" width="1" height="1" style="opacity:0;position:absolute" />
+
+    <!-- JS fetch as a backup (no-store prevents browser caching) -->
+    <script>
+      fetch('/api/hit/profile', { cache: 'no-store' }).catch(()=>{});
+    </script>
+
+    <p style="text-align:center;margin:20px 0">
+      <a href="https://www.linkedin.com/in/hiteshnarayan/">LinkedIn</a>
+      ·
+      <a href="mailto:hiteshna@usc.edu">Email</a>
+    </p>
+  </main>
+</body>
+</html>
