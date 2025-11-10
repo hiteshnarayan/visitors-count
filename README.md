@@ -1,36 +1,36 @@
-# Visitor Count Badge Service
+# Visitors Count · Badge Service
 
-This small service registers unique hits and serves Shields-compatible JSON so you can embed a badge in your GitHub README showing unique views.
+Privacy-friendly daily-unique visitor tracking with a custom, trademark-style SVG badge. Deployed on Vercel, backed by Upstash Redis.
 
-Usage
+Quick start
 
-- Start locally (file fallback storage):
+Production URL: https://visitorcountproject.vercel.app
 
-  npm install
-  npm start
 
-- Register a hit (call from your page or a ping):
+- Register a hit (daily-unique by IP + UA + day):
 
-  GET /api/hit/:key  (Vercel path) or /hit/:key (local Express)
+  GET /api/hit/:key
 
   Example:
 
   https://your-deploy-url.com/api/hit/my-repo
 
-- Badge endpoint (Shields-compatible JSON):
+- Badges:
 
-  GET /api/badge/:key  (Vercel path) or /badge/:key (local Express)
+  - Custom SVG (no Shields):
 
-  Example badge Markdown (replace YOUR_DEPLOY_URL and my-repo):
+    <img alt="unique views" src="https://visitorcountproject.vercel.app/api/svg/profile" />
 
-  ![unique views](https://img.shields.io/endpoint?url=https://YOUR_DEPLOY_URL/api/badge/my-repo)
+  - Shields endpoint:
+
+    ![unique views](https://img.shields.io/endpoint?url=https://visitorcountproject.vercel.app/api/badge/profile)
 
 Notes and customization
 
 - The service uses a simple unique detection by hashing IP + User-Agent + day. It allows one unique view per (IP+UA) per day.
-- Locally the project uses `data/counts.json` for storage. For production we recommend using Redis (Upstash) for durability and scaling.
+- Locally the code can fall back to `data/counts.json` but in production we use Upstash Redis for durability and scale.
 
-Deployment (Vercel + Upstash Redis — recommended)
+Deployment (Vercel + Upstash Redis)
 
 1. Create a Vercel account and connect your repository. Vercel auto-detects the `api/` folder and creates serverless endpoints.
 
@@ -95,7 +95,7 @@ Vercel CLI quick deploy & env setup
   vercel env add UPSTASH_REDIS_REST_TOKEN production
   # paste the REST token when prompted
 
-Using the client-side ping snippet
+Using the client-side ping snippet (optional)
 
 - Edit `public/ping.js`, set `repoKey` to the key you want to track (for example, your repo name).
 - Host `public/ping.js` on your site (or copy the inline snippet) and include it on pages you want to track.
@@ -111,10 +111,18 @@ Example inline usage:
 </script>
 ```
 
-You're ready — if you'd like, I can now:
-- Deploy this repo to Vercel from my environment and verify the badge URL, or
-- Walk you step-by-step while you run the Vercel CLI and add Upstash env vars, or
-- Set up the Redis counters and show quick Redis commands to inspect counts.
+Security & secret rotation
+
+- If a token leaks, rotate immediately in Upstash and update Vercel envs, then redeploy.
+- Recommended secrets:
+  - UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN
+  - VISITOR_HMAC_SECRET (hash user IDs when using OAuth flow)
+  - ADMIN_TOKEN (protects admin endpoints)
+
+Admin endpoints
+
+- Reset a key: POST /api/admin/reset  header: x-admin-token: <ADMIN_TOKEN>  body: {"key":"profile"}
+- Inspect today’s visitors: GET /api/admin/visitors/:key  header: x-admin-token: <ADMIN_TOKEN>
 
 Custom branded SVG badge
 
@@ -126,7 +134,7 @@ Custom branded SVG badge
 
 - This SVG uses a gradient, drop-shadow and monospaced typography to create a trademark-style look.
 
-GitHub OAuth (unique-account tracking)
+GitHub OAuth (unique-account tracking) — optional
 
 If you want to count unique *accounts* (GitHub users) rather than raw visitors, you can let users optionally sign in via GitHub and register their visit. Steps:
 
@@ -142,7 +150,7 @@ If you want to count unique *accounts* (GitHub users) rather than raw visitors, 
   - User clicks a login link that opens `/api/auth/login?key=my-repo&redirect=/thanks`
   - After they authorize the app, GitHub redirects to `/api/auth/callback` which registers the user id and redirects back.
 
-4. The service stores unique GitHub user ids in `users:<key>` (Upstash) or `counts.json` locally. You can then use `/api/badge/:key` to show either visitor badge (unique IP/day) or add another badge endpoint to show unique-account counts (I can add that if you want).
+4. The service stores unique GitHub user ids in `users:<key>` (Upstash). Use `/api/badge/users/:key` to show the unique-account count.
 
 Environment variables summary
 
