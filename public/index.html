@@ -3,28 +3,90 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Visitors Count · Badge Service</title>
+  <title>Visitor Counter Badge</title>
+  <meta name="description" content="Simple visitor counter with custom SVG badges. No cookies, no tracking." />
   <meta name="color-scheme" content="dark light" />
   <style>
-    :root { --c1:#2E9AFE; --c2:#7FDBDA; --c3:#1B1F23; --fg:#eaeaea; --muted:#a7a7a7; }
-    html, body { margin:0; padding:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif; background: #0b0e12; color: var(--fg); }
-    .wrap { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
-    .hero { display:flex; gap:20px; align-items:center; }
-    .brand {
-      width:64px; height:64px; border-radius:14px; background: linear-gradient(90deg, var(--c1), var(--c2), var(--c3));
-      box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-      position:relative;
+    :root { 
+      --c1: #2E9AFE; 
+      --c2: #7FDBDA; 
+      --c3: #1B1F23; 
+      --fg: #eaeaea; 
+      --muted: #a7a7a7; 
     }
-    .brand::after { content:''; position:absolute; inset:0; border-radius:14px; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.08); }
-    h1 { font-weight:700; font-size: clamp(24px, 4vw, 34px); margin:0; }
-    p.lead { color: var(--muted); margin:8px 0 0; }
-    .card { margin-top: 28px; padding: 20px; border-radius: 12px; background: #0f1320; border: 1px solid rgba(255,255,255,0.06); }
-    code, pre { background: #0b0f1a; color:#d7e7ff; border-radius: 8px; padding: 2px 6px; }
-    pre { padding:12px; overflow:auto; }
+    html, body { 
+      margin: 0; 
+      padding: 0; 
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif; 
+      background: #0b0e12; 
+      color: var(--fg); 
+    }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+    .hero { display: flex; gap: 20px; align-items: center; margin-bottom: 40px; }
+    .brand {
+      width: 64px; 
+      height: 64px; 
+      border-radius: 14px; 
+      background: linear-gradient(90deg, var(--c1), var(--c2), var(--c3));
+      box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+      position: relative;
+    }
+    .brand::after { 
+      content: ''; 
+      position: absolute; 
+      inset: 0; 
+      border-radius: 14px; 
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.08); 
+    }
+    h1 { font-weight: 700; font-size: clamp(24px, 4vw, 34px); margin: 0; }
+    h2 { font-size: 20px; margin: 24px 0 16px; font-weight: 600; }
+    h3 { font-size: 16px; margin: 0 0 12px; font-weight: 600; }
+    p.lead { color: var(--muted); margin: 8px 0 0; font-size: 16px; }
+    .card { 
+      margin-top: 28px; 
+      padding: 20px; 
+      border-radius: 12px; 
+      background: #0f1320; 
+      border: 1px solid rgba(255,255,255,0.06); 
+    }
+    code, pre { 
+      background: #0b0f1a; 
+      color: #d7e7ff; 
+      border-radius: 8px; 
+      font-family: ui-monospace, 'Cascadia Code', monospace;
+    }
+    code { padding: 2px 6px; font-size: 14px; }
+    pre { padding: 12px; overflow: auto; margin: 12px 0; }
     a { color: var(--c2); text-decoration: none; }
-    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:18px; margin-top: 18px; }
-    .muted { color: var(--muted); }
-    .badge { display:inline-block; margin:10px 0; }
+    a:hover { text-decoration: underline; }
+    .grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); 
+      gap: 18px; 
+      margin-top: 18px; 
+    }
+    .muted { color: var(--muted); font-size: 14px; }
+    .badge { display: inline-block; margin: 10px 0; }
+    .note {
+      background: rgba(46, 154, 254, 0.08);
+      border-left: 3px solid var(--c1);
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    @media (max-width: 640px) {
+      .hero { flex-direction: column; text-align: center; }
+      .wrap { padding: 30px 16px; }
+    }
   </style>
 </head>
 <body>
@@ -32,57 +94,78 @@
     <div class="hero">
       <div class="brand"></div>
       <div>
-        <h1>Visitors Count · Badge Service</h1>
-        <p class="lead">Privacy-friendly daily-unique visitor tracking and a custom, trademark-style SVG badge you can embed anywhere.</p>
+        <h1>Visitor Counter Badge</h1>
+        <p class="lead">Simple visitor counter with custom SVG badges. No cookies, no tracking.</p>
       </div>
     </div>
 
     <div class="card">
-      <h2>Live badge</h2>
-      <p class="muted">Custom SVG (no Shields):</p>
+      <h2>Live Demo</h2>
+      <p class="muted">Custom SVG:</p>
       <div class="badge">
-        <img alt="profile views" src="/api/svg/profile" height="64" />
+        <img alt="views" src="/api/svg/profile" />
       </div>
-      <p class="muted">Shields endpoint (alternative):</p>
-      <img alt="profile views" src="https://img.shields.io/endpoint?url=/api/badge/profile" />
+      <p class="muted">Shields.io style:</p>
+      <div class="badge">
+        <img alt="views" src="https://img.shields.io/endpoint?url=https://badge-visitor-count.vercel.app/api/badge/profile" />
+      </div>
     </div>
 
     <div class="grid">
       <div class="card">
-        <h3>Hit endpoint</h3>
-        <p>Daily-unique by IP + UA + day:</p>
+        <h3>Track visitors</h3>
         <pre><code>GET /api/hit/&lt;key&gt;</code></pre>
-        <p class="muted">Example: <a href="/api/hit/profile" target="_blank" rel="noreferrer">/api/hit/profile</a></p>
+        <p class="muted">Example: <a href="/api/hit/demo">/api/hit/demo</a></p>
       </div>
+      
       <div class="card">
-        <h3>Badge endpoints</h3>
+        <h3>Get badge</h3>
         <pre><code>GET /api/svg/&lt;key&gt;
 GET /api/badge/&lt;key&gt;</code></pre>
-        <p class="muted">Try: <a href="/api/svg/profile" target="_blank" rel="noreferrer">/api/svg/profile</a></p>
+        <p class="muted">Try: <a href="/api/svg/demo">/api/svg/demo</a></p>
       </div>
+      
       <div class="card">
-        <h3>Pixel (optional)</h3>
-        <p>1×1 transparent PNG with no-cache headers:</p>
+        <h3>Tracking pixel</h3>
         <pre><code>GET /api/pixel/&lt;key&gt;</code></pre>
-        <p class="muted"><a href="/api/pixel/profile" target="_blank" rel="noreferrer">/api/pixel/profile</a></p>
+        <p class="muted">Returns 1×1 transparent PNG</p>
       </div>
+      
       <div class="card">
         <h3>Admin</h3>
-        <p class="muted">Reset (requires x-admin-token):</p>
-        <pre><code>POST /api/admin/reset { key }</code></pre>
-        <p class="muted">Inspect today visitors (requires x-admin-token):</p>
+        <p class="muted">Reset:</p>
+        <pre><code>POST /api/admin/reset
+{ "key": "demo" }</code></pre>
+        <p class="muted">View visitors:</p>
         <pre><code>GET /api/admin/visitors/&lt;key&gt;</code></pre>
+        <p class="muted">Requires <code>x-admin-token</code> header</p>
       </div>
     </div>
 
     <div class="card">
-      <h3>Embed examples</h3>
-      <pre><code>![views](https://img.shields.io/endpoint?url=https://visitorcountproject.vercel.app/api/badge/profile)</code></pre>
-      <pre><code>&lt;img alt="views" src="https://visitorcountproject.vercel.app/api/svg/profile" /&gt;</code></pre>
-      <p class="muted">Note: README image caching may limit pixel-driven increments. For reliable increments, call <code>/api/hit/&lt;key&gt;</code> from your site/app.</p>
+      <h2>Usage</h2>
+      
+      <h3>GitHub README</h3>
+      <pre><code>![views](https://img.shields.io/endpoint?url=https://badge-visitor-count.vercel.app/api/badge/readme)</code></pre>
+      
+      <h3>HTML embed</h3>
+      <pre><code>&lt;img src="https://badge-visitor-count.vercel.app/api/svg/readme" alt="views" /&gt;</code></pre>
+      
+      <h3>Website tracking</h3>
+      <pre><code>&lt;script&gt;
+  fetch('https://badge-visitor-count.vercel.app/api/hit/homepage', 
+    { mode: 'no-cors' }).catch(() =&gt; {});
+&lt;/script&gt;</code></pre>
+
+      <div class="note">
+        <strong>Note:</strong> README image caching may delay updates. For real-time tracking, call <code>/api/hit/&lt;key&gt;</code> from your site.
+      </div>
     </div>
 
-    <p class="muted">Powered by Upstash Redis · Deployed on Vercel</p>
+    <footer>
+      <p>Powered by Upstash Redis · Deployed on Vercel</p>
+      <p><a href="https://github.com/yourusername/visitor-counter" target="_blank">View on GitHub</a></p>
+    </footer>
   </div>
 </body>
 </html>
