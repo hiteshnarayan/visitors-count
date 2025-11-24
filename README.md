@@ -19,11 +19,11 @@ Production URL: https://visitorcountproject.vercel.app
 
   - Custom SVG (no Shields):
 
-    <img alt="unique views" src="https://visitorcountproject.vercel.app/api/svg/profile" />
+    <img alt="unique views" src="https://badge-visitor-count.vercel.app/api/svg/profile" />
 
   - Shields endpoint:
 
-    ![unique views](https://img.shields.io/endpoint?url=https://visitorcountproject.vercel.app/api/badge/profile)
+    ![unique views](https://img.shields.io/endpoint?url=https://badge-visitor-count.vercel.app/api/badge/profile)
 
 Notes and customization
 
@@ -51,10 +51,9 @@ Deployment (Vercel + Upstash Redis)
 5. Embed the badge in your GitHub README using Shields or the custom SVG:
 
   ```markdown
-  <!-- Shields endpoint style -->
+
   ![unique views](https://img.shields.io/endpoint?url=https://<your-deploy-url>/api/badge/my-repo)
 
-  <!-- Custom branded SVG (no Shields) -->
   <img alt="unique views" src="https://<your-deploy-url>/api/svg/my-repo" />
   ```
 
@@ -66,18 +65,18 @@ Quick Redis primer (for this project)
   - Counter: `count:<key>` — integer total unique views.
 - Flow: SADD the visitor hash into the daily Set. If SADD returns 1 (new member), INCR the counter. Set expiry on daily set (8 days) so old hashes get cleaned.
 
-Local fallback and testing
+#### Local fallback and testing
 
 - If the Upstash env vars are not set, the code falls back to `data/counts.json` for local testing.
 - To run local tests that exercise the Vercel handlers without deploying, use:
 
   node test_local.js
 
-Privacy note
+### Privacy note
 
 - We hash visitor identifiers (IP + UA + day) but still store hashed values. If you need stricter privacy, reduce retention or only store daily aggregates.
 
-Vercel CLI quick deploy & env setup
+### Vercel CLI quick deploy & env setup
 
 1. Install Vercel CLI (you already ran this):
 
@@ -95,7 +94,7 @@ Vercel CLI quick deploy & env setup
   vercel env add UPSTASH_REDIS_REST_TOKEN production
   # paste the REST token when prompted
 
-Using the client-side ping snippet (optional)
+### Using the client-side ping snippet (optional)
 
 - Edit `public/ping.js`, set `repoKey` to the key you want to track (for example, your repo name).
 - Host `public/ping.js` on your site (or copy the inline snippet) and include it on pages you want to track.
@@ -111,7 +110,7 @@ Example inline usage:
 </script>
 ```
 
-Security & secret rotation
+### Security & secret rotation
 
 - If a token leaks, rotate immediately in Upstash and update Vercel envs, then redeploy.
 - Recommended secrets:
@@ -119,12 +118,12 @@ Security & secret rotation
   - VISITOR_HMAC_SECRET (hash user IDs when using OAuth flow)
   - ADMIN_TOKEN (protects admin endpoints)
 
-Admin endpoints
+### Admin endpoints
 
 - Reset a key: POST /api/admin/reset  header: x-admin-token: <ADMIN_TOKEN>  body: {"key":"profile"}
 - Inspect today’s visitors: GET /api/admin/visitors/:key  header: x-admin-token: <ADMIN_TOKEN>
 
-Custom branded SVG badge
+### Custom branded SVG badge
 
 - You can embed a proprietary-looking badge without Shields:
 
@@ -134,28 +133,6 @@ Custom branded SVG badge
 
 - This SVG uses a gradient, drop-shadow and monospaced typography to create a trademark-style look.
 
-GitHub OAuth (unique-account tracking) — optional
-
-If you want to count unique *accounts* (GitHub users) rather than raw visitors, you can let users optionally sign in via GitHub and register their visit. Steps:
-
-1. Create a GitHub OAuth App: https://github.com/settings/developers -> New OAuth App
-  - Authorization callback URL: https://<your-deploy-url>/api/auth/callback
-  - Note the Client ID and Client Secret
-
-2. Add these env vars to Vercel (production):
-  - GITHUB_CLIENT_ID
-  - GITHUB_CLIENT_SECRET
-
-3. Usage flow:
-  - User clicks a login link that opens `/api/auth/login?key=my-repo&redirect=/thanks`
-  - After they authorize the app, GitHub redirects to `/api/auth/callback` which registers the user id and redirects back.
-
-4. The service stores unique GitHub user ids in `users:<key>` (Upstash). Use `/api/badge/users/:key` to show the unique-account count.
-
-### Environment variables summary
-
-- UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN (optional but recommended)
-- GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET (optional for unique-account tracking)
 
 ## License
 
