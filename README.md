@@ -152,9 +152,13 @@ If you want to count unique *accounts* (GitHub users) rather than raw visitors, 
 
 4. The service stores unique GitHub user ids in `users:<key>` (Upstash). Use `/api/badge/users/:key` to show the unique-account count.
 
-Environment variables summary
+### Environment variables summary
 
 - UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN (optional but recommended)
 - GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET (optional for unique-account tracking)
+
+## License
+
+This project is licensed under the MIT License, see the [LICENSE](LICENSE) file for details.
 
 
