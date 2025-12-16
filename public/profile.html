@@ -13,18 +13,13 @@
       <sub>Badge shows total; a hidden pixel and script below register your visit (once per day).</sub>
     </div>
 
-  <!-- Invisible tracking pixel (src set via JS after cid is ready to avoid double requests) -->
-  <img id="vcpx" alt="" width="1" height="1" style="opacity:0;position:absolute" />
-
-    <!-- JS fetch with persistent client id (cid) adds entropy to uniqueness behind shared IP/UA -->
+    <!-- JS fetch with persistent client id (cid) for unique visitor tracking -->
     <script>
       const cidKey='vc_cid';
       let cid=localStorage.getItem(cidKey);
-      if(!cid){cid=Math.random().toString(36).slice(2,10);localStorage.setItem(cidKey,cid);}      
-  // Set pixel src once with cid to avoid a second network round-trip
-  const px=document.getElementById('vcpx');
-  if(px) px.src='/api/pixel/profile?cid='+encodeURIComponent(cid)+'&t='+(Date.now());
-      fetch('/api/hit/profile?cid='+encodeURIComponent(cid)+'&t='+(Date.now()), { cache: 'no-store' }).catch(()=>{});
+      if(!cid){cid=Math.random().toString(36).slice(2,10);localStorage.setItem(cidKey,cid);}
+      // Single tracking call to avoid double counting
+      fetch('/api/hit/profile?cid='+encodeURIComponent(cid), { cache: 'no-store' }).catch(()=>{});
     </script>
 
     <p style="text-align:center;margin:20px 0">
