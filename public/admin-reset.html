@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Reset</title>
+</head>
+<body style="font-family:system-ui;padding:40px;max-width:600px;margin:0 auto">
+  <h1>Admin Reset</h1>
+  <p>Reset visitor count to 0</p>
+  
+  <input type="text" id="key" value="profile" placeholder="Key to reset" style="padding:8px;width:200px">
+  <input type="password" id="token" placeholder="Admin token" style="padding:8px;width:200px">
+  <button onclick="reset()" style="padding:8px 20px;cursor:pointer">Reset Count</button>
+  
+  <pre id="result" style="background:#f5f5f5;padding:12px;margin-top:20px"></pre>
+  
+  <script>
+    async function reset() {
+      const key = document.getElementById('key').value;
+      const token = document.getElementById('token').value;
+      const result = document.getElementById('result');
+      
+      if (!token) {
+        result.textContent = 'Please enter admin token';
+        return;
+      }
+      
+      try {
+        const res = await fetch('/api/admin/reset', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-token': token
+          },
+          body: JSON.stringify({ key })
+        });
+        const data = await res.json();
+        result.textContent = JSON.stringify(data, null, 2);
+        
+        // Check badge
+        if (res.ok) {
+          const badge = await fetch(`/api/badge/${key}`);
+          const badgeData = await badge.json();
+          result.textContent += '\n\nCurrent badge:\n' + JSON.stringify(badgeData, null, 2);
+        }
+      } catch (e) {
+        result.textContent = 'Error: ' + e.message;
+      }
+    }
+  </script>
+</body>
+</html>
