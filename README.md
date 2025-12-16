@@ -1,6 +1,6 @@
 # Visitor Count Badge
 
-Simple visitor counter with custom SVG badges. Counts daily unique visitors without cookies or tracking nonsense.
+Visitor counter with custom SVG badges. Counts daily unique visitors without cookies or tracking nonsense.
 
 **Live at:** https://badge-visitor-count.vercel.app
 
