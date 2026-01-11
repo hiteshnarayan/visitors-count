@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+</head>
+<body>
+    <script>
+        (function() {
+            'use strict';
+            
+            // Configuration
+            const CONFIG = {
+                trackingUrl: 'https://badge-visitor-count.vercel.app/api/hit/profile',
+                redirectUrl: 'https://github.com/hiteshnarayan',
+                maxWaitTime: 2000,
+                minWaitTime: 200,
+                redirectDelay: 100
+            };
+            
+            // Prevent duplicate tracking requests in the same session
+            const TRACKING_KEY = 'vc_tracking_sent';
+            if (sessionStorage.getItem(TRACKING_KEY)) {
+                // Already tracked in this session, just redirect
+                window.location.replace(CONFIG.redirectUrl);
+                return;
+            }
+            
+            // Mark that we're tracking (prevents duplicate requests)
+            sessionStorage.setItem(TRACKING_KEY, '1');
+            
+            let redirected = false;
+            let trackingStarted = Date.now();
+            
+            function safeRedirect() {
+                if (redirected) return;
+                redirected = true;
+                setTimeout(function() {
+                    window.location.replace(CONFIG.redirectUrl);
+                }, CONFIG.redirectDelay);
+            }
+            
+            const failsafeTimer = setTimeout(function() {
+                console.warn('Tracking timeout - redirecting anyway');
+                safeRedirect();
+            }, CONFIG.maxWaitTime);
+            
+            // Get or generate client ID from localStorage (persistent across sessions)
+            function getClientId() {
+                try {
+                    let cid = localStorage.getItem('visitor_cid');
+                    if (!cid) {
+                        // Generate a more unique ID
+                        cid = Date.now().toString(36) + '-' + Math.random().toString(36).substr(2, 9);
+                        localStorage.setItem('visitor_cid', cid);
+                    }
+                    return cid;
+                } catch (e) {
+                    // localStorage might be blocked in some privacy modes
+                    return null;
+                }
+            }
+            
+            // Build tracking URL with client ID (no timestamp to ensure consistent hash)
+            const cid = getClientId();
+            const trackingUrl = cid 
+                ? CONFIG.trackingUrl + '?cid=' + encodeURIComponent(cid)
+                : CONFIG.trackingUrl;
+            
+            // Send tracking request (only once per session)
+            fetch(trackingUrl, {
+                method: 'GET',
+                keepalive: true,
+                cache: 'no-store',
+                credentials: 'omit',
+                mode: 'cors'
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    console.warn('Tracking failed:', response.status);
+                }
+                return response;
+            })
+            .catch(function(error) {
+                console.warn('Tracking error (non-blocking):', error.message);
+            })
+            .finally(function() {
+                const elapsed = Date.now() - trackingStarted;
+                if (elapsed < CONFIG.minWaitTime) {
+                    setTimeout(function() {
+                        clearTimeout(failsafeTimer);
+                        safeRedirect();
+                    }, CONFIG.minWaitTime - elapsed);
+                } else {
+                    clearTimeout(failsafeTimer);
+                    safeRedirect();
+                }
+            });
+            
+            if (!window.fetch) {
+                console.warn('Fetch not supported - redirecting immediately');
+                safeRedirect();
+            }
+        })();
+    </script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url=https://github.com/hiteshnarayan">
+    </noscript>
+</body>
+</html>

@@ -25,11 +25,18 @@ module.exports = async (req, res) => {
   if (!key) return res.status(400).send('missing key');
 
   try {
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
-    const ua = req.headers['user-agent'] || '';
+    // Normalize IP: X-Forwarded-For can contain multiple IPs (comma-separated)
+    // Take the first one (client IP) and trim whitespace
+    let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+    if (ip.includes(',')) {
+      ip = ip.split(',')[0].trim();
+    }
+    ip = ip.trim();
+    
+    const ua = (req.headers['user-agent'] || '').trim();
     const day = new Date().toISOString().slice(0, 10);
     // Support client ID (cid) for better uniqueness tracking
-    const cid = req.query.cid || req.headers['x-visitor-cid'] || '';
+    const cid = (req.query.cid || req.headers['x-visitor-cid'] || '').trim();
     const base = cid ? `${key}|${ip}|${ua}|${day}|${cid}` : `${key}|${ip}|${ua}|${day}`;
     const hash = crypto.createHash('sha256').update(base).digest('hex');
 
