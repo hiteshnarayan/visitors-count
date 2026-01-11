@@ -2,6 +2,18 @@ const crypto = require('crypto');
 const { addHit } = require('../../lib/storage');
 
 module.exports = async (req, res) => {
+  // Set CORS headers to allow requests from GitHub Pages and other origins
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-visitor-cid');
+  res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  // Extract key from query (Vercel dynamic routes put path params in query)
   const { key } = req.query;
   if (!key) return res.status(400).json({ error: 'missing key' });
 
